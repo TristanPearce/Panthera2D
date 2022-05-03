@@ -36,7 +36,7 @@ namespace Panthera2D.Native
         private static bool _linuxset = false;
         private static bool _linux = false;
 
-        public static bool __linux__
+        private static bool __linux__
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Panthera2D.Native
             return mHnd;
         }
 
-        public static IntPtr csglDllSymbol(IntPtr mHnd, string symbol)
+        private static IntPtr DllSymbol(IntPtr mHnd, string symbol)
         {
             IntPtr symPtr;
 
@@ -86,9 +86,9 @@ namespace Panthera2D.Native
             return symPtr;
         }
 
-        public static Delegate csglDllDelegate(Type delegateType, IntPtr mHnd, string symbol)
+        private static Delegate DllDelegate(Type delegateType, IntPtr mHnd, string symbol)
         {
-            IntPtr ptrSym = csglDllSymbol(mHnd, symbol);
+            IntPtr ptrSym = DllSymbol(mHnd, symbol);
             return Marshal.GetDelegateForFunctionPointer(ptrSym, delegateType);
         }
 
@@ -100,7 +100,7 @@ namespace Panthera2D.Native
             {
                 if (fi.FieldType.BaseType == _delegateType)
                 {
-                    IntPtr ptr = csglDllSymbol(mHnd, fi.Name);
+                    IntPtr ptr = DllSymbol(mHnd, fi.Name);
 
                     if (ptr != IntPtr.Zero)
                         fi.SetValue(null, Marshal.GetDelegateForFunctionPointer(ptr, fi.FieldType));
@@ -110,7 +110,7 @@ namespace Panthera2D.Native
             }
         }
 
-        public static void csglMemcpy(IntPtr dest, IntPtr source, uint count)
+        private static void Memcpy(IntPtr dest, IntPtr source, uint count)
         {
             if (__linux__)
                 memcpy(dest, source, count);
