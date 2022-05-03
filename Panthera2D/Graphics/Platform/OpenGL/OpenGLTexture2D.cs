@@ -169,6 +169,20 @@ namespace Panthera2D.Graphics
             }
         }
 
+        public override Texture2D Resize(int newWidth, int newHeight, int xOffset = 0, int yOffset = 0)
+        {
+            OpenGLTexture2D newTexture = new OpenGLTexture2D(newWidth, newHeight);
+
+            int sampleWidth = Math.Min(this.Width, newWidth);
+            int sampleHeight = Math.Min(this.Height, newHeight);
+
+            Color[] newColors = GetPixels(0, 0, sampleWidth, sampleHeight);
+
+            newTexture.SetPixels(0, 0, sampleWidth, sampleHeight, newColors);
+
+            return newTexture;
+        }
+
         public override void Dispose()
         {
             glDeleteTextures(1, new uint[] { _id });
@@ -221,6 +235,6 @@ namespace Panthera2D.Graphics
             return colors;
         }
 
-
+        
     }
 }

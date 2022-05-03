@@ -65,6 +65,8 @@ namespace Panthera2D.Graphics
 
         public abstract void SetPixels(int xOffset, int yOffset, int width, int height, Color[] pixels);
 
+        public abstract Texture2D Resize(int width, int height, int xOffset = 0, int yOffset = 0);
+
         #endregion
     }
 }

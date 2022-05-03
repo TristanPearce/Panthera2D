@@ -29,11 +29,12 @@ namespace Panthera2D
 
         public void SetResolution(int width, int height)
         {
+            Texture2D newTex = _fullscreenTexture.Resize(width, height);
             _fullscreenTexture.Dispose();
 
             //maybe implement some sort of texture resizing function
 
-            _fullscreenTexture = GraphicsDevice.CreateTexture2D(width, height);
+            _fullscreenTexture = newTex;
         }
 
         public void Pixel(int x, int y, Color color)
