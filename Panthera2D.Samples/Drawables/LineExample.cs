@@ -37,7 +37,7 @@ public class LineExample : Application
         Color = Color.Blue
     };
 
-    public LineExample(StartupInfo info) : base(info)
+    public LineExample() : base()
     {
         Input.KeyPressed += (key) => 
         {

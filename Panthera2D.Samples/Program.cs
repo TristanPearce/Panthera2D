@@ -1,13 +1,13 @@
-﻿using Panthera2D.Core;
+﻿using Panthera2D;
+using Panthera2D.Core;
 using Panthera2D.Samples;
 using Panthera2D.Samples.Drawables;
 
 var factory = new ApplicationBuilder();
-factory.ConfigureStartupInfo(info =>
+factory.ConfigureWindow(window =>
 {
-    info.WindowTitle = "Panthera2D - Line Example";
-    info.WindowWidth = 800;
-    info.WindowHeight = 800;
+    window.Title = "Pillow Application";
+    window.Size = new Vector2i(1000, 400);
 });
 
 factory.Create<PillowApplication>().Run();

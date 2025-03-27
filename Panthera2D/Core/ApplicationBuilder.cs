@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
 using Panthera2D.Graphics;
+using Panthera2D.Graphics.GLFW3;
+using Panthera2D.Graphics.Platform.OpenGL;
+using Panthera2D.Native;
 
 namespace Panthera2D.Core;
 
@@ -11,7 +14,7 @@ public sealed class ApplicationBuilder
 {
     private IServiceCollection serviceCollection;
 
-    private List<Action<StartupInfo>> startupInfoConfigurators = [];
+    private List<Action<IWindow>> windowConfigurators = [];
 
     public ApplicationBuilder()
     {
@@ -23,8 +26,7 @@ public sealed class ApplicationBuilder
         serviceConfigurator(serviceCollection);
     }
 
-
-    public void ConfigureStartupInfo(Action<StartupInfo> startupInfoConfigurator) => startupInfoConfigurators.Add(startupInfoConfigurator);
+    public void ConfigureWindow(Action<IWindow> startupInfoConfigurator) => windowConfigurators.Add(startupInfoConfigurator);
 
 
     public T Create<T>() where T : Application
@@ -32,11 +34,9 @@ public sealed class ApplicationBuilder
         var services = serviceCollection.BuildServiceProvider();
         using var scope = services.CreateScope();
 
-        var startupInfo = new StartupInfo();
-        startupInfoConfigurators.ForEach(configurator => configurator(startupInfo));
+        var app = ActivatorUtilities.CreateInstance<T>(scope.ServiceProvider);
+        windowConfigurators.ForEach((configurator) => configurator(app.Window));
 
-        var app = ActivatorUtilities.CreateInstance<T>(scope.ServiceProvider, startupInfo);
-        
         return app;
     }
 }

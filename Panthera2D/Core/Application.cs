@@ -11,19 +11,17 @@ namespace Panthera2D;
 
 public abstract class Application : IDisposable
 {
-    private StartupInfo _startupInfo;
-    public Window Window { get; private set; }
-    public IRenderer2D Renderer { get; private set; }
-    public InputState InputState { get; set; }
+    public required IWindow Window { get; init; }
+    public required IRenderer2D Renderer { get; init; }
+    public required InputState InputState { get; init; }
+
     public InputManager Input { get; private set; }
 
     protected Framerate Framerate { get; private set; }  = new Framerate();
 
-    public Application(StartupInfo info)
+    public Application()
     {
-        _startupInfo = info;
-
-        Window = new GLFW3Window(_startupInfo.WindowWidth, _startupInfo.WindowHeight, _startupInfo.WindowTitle);
+        Window = new GLFW3Window();
         InputState = new Input.GLFW3.GLFW3InputState(Window as GLFW3Window);
         Renderer = new OpenGlRenderer2D();
         Input = new InputManager(Window, InputState);
@@ -95,7 +93,9 @@ public abstract class Application : IDisposable
 
     public virtual void Dispose()
     {
-        Window.Dispose();
+        if (Window is IDisposable disposableWindow)
+            disposableWindow.Dispose();
+
         InputState.Dispose();
     }
 

@@ -12,7 +12,7 @@ namespace Panthera2D.Input
     {
 
         private InputState _state;
-        private Window _window;
+        private IWindow _window;
 
         private IDictionary<Key, float> _keysHeld;
 
@@ -27,14 +27,14 @@ namespace Panthera2D.Input
         {
             get
             {
-                _normMousePos.X = _state.MousePosition.X / _window.Width;
-                _normMousePos.Y = _state.MousePosition.Y / _window.Height;
+                _normMousePos.X = _state.MousePosition.X / _window.Size.X;
+                _normMousePos.Y = _state.MousePosition.Y / _window.Size.Y;
 
                 return _normMousePos;
             }
         }
 
-        public InputManager(Window window, InputState state)
+        public InputManager(IWindow window, InputState state)
         {
             this._window = window;
             this._state = state;

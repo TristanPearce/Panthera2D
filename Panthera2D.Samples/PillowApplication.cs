@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace Panthera2D.Samples;
 
-public class PillowApplication(StartupInfo info) : Application(info)
+public class PillowApplication() : Application()
 {
     private float currentAngle = 0;
 

@@ -11,7 +11,6 @@ namespace Panthera2D.Input
     {
         public abstract Vector2 MousePosition { get; }
 
-
         #region "Virtual Extentions"
 
         public virtual bool IsKeyDown(Key key)

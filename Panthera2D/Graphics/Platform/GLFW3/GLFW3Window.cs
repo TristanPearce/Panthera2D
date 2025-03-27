@@ -9,26 +9,58 @@ namespace Panthera2D.Graphics.GLFW3
     /// A Graphical Window, currently implemented with GLFW should be abstracted and have
     /// platform specific implementations.
     /// </summary>
-    public class GLFW3Window : Window
+    public class GLFW3Window : IWindow
     {
-
         private GLFWwindowclosefun _winCloseCallback;
 
         private IntPtr _handle;
-        public override IntPtr Handle => _handle;
+        public IntPtr Handle => _handle;
 
-        public override bool Alive => glfwWindowShouldClose(Handle) == 0;
-
-        private int _width;
-        private int _height;
-
-        public override int Width => _width;
-        public override int Height => _height;
+        public bool Alive => glfwWindowShouldClose(Handle) == 0;
 
         /// <summary>
         /// Width / Height
         /// </summary>
-        public float AspectRatio => (float)Width / (float)Height;
+        public float AspectRatio => (float)Size.X/ (float)Size.Y;
+
+        private Vector2i position;
+        public Vector2i Position 
+        {
+            get => position;
+
+            set
+            {
+                glfwSetWindowSize(Handle, value.X, value.Y);
+                position = value;
+            }
+        }
+
+        private Vector2i size;
+        public Vector2i Size 
+        {
+            get
+            {
+                glfwGetWindowSize(Handle, ref size.X, ref size.Y);
+                return size;
+            }
+
+            set
+            {
+                glfwSetWindowSize(Handle, value.X, value.Y);
+                size = value;
+            } 
+        }
+
+        private string title;
+        public string Title 
+        {
+            get => title;
+            set
+            {
+                glfwSetWindowTitle(Handle, value);
+                title = value;
+            }
+        }
 
         public GLFW3Window(int width = 640, int height = 480, string title = "Panthera2D")
         {
@@ -45,8 +77,7 @@ namespace Panthera2D.Graphics.GLFW3
             if (_handle == null)
                 throw new Exception("Window could not be created!");
 
-            _width = width;
-            _height = height;
+            size = new Vector2i(width, height);
 
             glfwMakeContextCurrent(_handle);
 
@@ -67,19 +98,19 @@ namespace Panthera2D.Graphics.GLFW3
             this.Dispose();
         }
 
-        public override void Render()
+        public void Render()
         {
             glfwSwapBuffers(_handle);
             //glFinish();
             //glFlush();
         }
 
-        public override void Update()
+        public void Update()
         {
             glfwPollEvents();
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             if (!Alive) return;
 

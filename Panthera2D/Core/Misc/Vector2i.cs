@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Panthera2D
 {
-    public struct Vector2i
+    public struct Vector2i(int x, int y)
     {
 
-        public int X, Y;
+        public int X = x, Y = y;
 
     }
 }
