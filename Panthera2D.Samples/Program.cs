@@ -1,4 +1,5 @@
 ﻿using Panthera2D.Core;
+using Panthera2D.Samples;
 using Panthera2D.Samples.Drawables;
 
 var factory = new ApplicationBuilder();
@@ -9,4 +10,4 @@ factory.ConfigureStartupInfo(info =>
     info.WindowHeight = 800;
 });
 
-factory.Create<LineExample>().Run();
+factory.Create<PillowApplication>().Run();

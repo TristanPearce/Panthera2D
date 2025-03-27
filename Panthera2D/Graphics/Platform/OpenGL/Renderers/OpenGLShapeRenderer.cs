@@ -26,6 +26,7 @@ public struct VertexPositionColor
     {
         X = x;
         Y = y;
+
         R = r;
         G = g;
         B = b;
@@ -33,7 +34,7 @@ public struct VertexPositionColor
     }
 }
 
-internal class OpenGLShapeRenderer : IDisposable
+internal sealed class OpenGLShapeRenderer : IDisposable
 {
     private OpenGlVertexArrayObject _vao;
     private OpenGLVertexBufferLayout _layout;
@@ -46,8 +47,11 @@ internal class OpenGLShapeRenderer : IDisposable
     private List<VertexPositionColor> _vertices;
     private List<uint> _indices;
 
-    public OpenGLShapeRenderer()
+    private Viewport viewport;
+
+    public OpenGLShapeRenderer(Viewport viewport)
     {
+        this.viewport = viewport;
         Initialize();
     }
 
@@ -154,6 +158,7 @@ internal class OpenGLShapeRenderer : IDisposable
         _layout.Enable();
 
         _shader.Use();
+        _shader.SetMat4("uProjectionMatrix", viewport.GetMatrix());
 
         glDrawElements(GL_TRIANGLES, _indices.Count, GL_UNSIGNED_INT, IntPtr.Zero);
 
@@ -167,7 +172,7 @@ internal class OpenGLShapeRenderer : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!_disposed)
         {

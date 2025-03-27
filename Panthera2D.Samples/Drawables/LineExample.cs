@@ -69,5 +69,7 @@ public class LineExample : Application
 
         rectangle.X = MathF.Cos(angle) - rectangle.Width / 2f;
         rectangle.Y = MathF.Sin(angle) - rectangle.Height / 2f;
+
+        Renderer.Viewport.SetTranslation(new Vector2(MathF.Sin(angle), MathF.Cos(angle)));
     }
 }

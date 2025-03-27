@@ -8,14 +8,16 @@ namespace Panthera2D.Graphics.Platform.OpenGL;
 
 using static Panthera2D.Native.OpenGL;
 
-public class OpenGlRenderer2D : IRenderer2D, IDisposable
+public sealed class OpenGlRenderer2D : IRenderer2D, IDisposable
 {
-    //private OpenGlTextureRenderer _textureRenderer;
     private OpenGLShapeRenderer shapeRenderer;
+
+    public Viewport Viewport { get; private set; }
 
     public OpenGlRenderer2D()
     {
-        shapeRenderer = new OpenGLShapeRenderer();
+        Viewport = new Viewport();
+        shapeRenderer = new OpenGLShapeRenderer(Viewport);
     }
 
     public void Render(Line line)
@@ -23,24 +25,23 @@ public class OpenGlRenderer2D : IRenderer2D, IDisposable
         shapeRenderer.Render(line);
     }
 
+    public void Render(Rectangle rectangle)
+    {
+        shapeRenderer.Render(rectangle);
+    }
+
     public void Render(Sprite sprite)
     {
-        //_textureRenderer.Begin();
-        //_textureRenderer.Draw(sprite.Texture, sprite.Position.X, sprite.Position.Y, sprite.Scale.X, sprite.Scale.Y);
-        //_textureRenderer.End();
+
     }
 
     public void Dispose()
     {
-        //_textureRenderer.Dispose();
         shapeRenderer.Dispose();
     }
 
     public void BeginFrame()
     {
-        glClearColor(0f, 0f, 0f, 1f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         shapeRenderer.BeginFrame();
     }
 
@@ -49,9 +50,10 @@ public class OpenGlRenderer2D : IRenderer2D, IDisposable
         shapeRenderer.EndFrame();
     }
 
-    public void Render(Rectangle rectangle)
+    public void Clear(Color color)
     {
-        shapeRenderer.Render(rectangle);
+        glClearColor(color.R, color.G, color.B, color.A);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     private struct VertexPositionColor(float x, float y, float z, float r, float g, float b, float a)

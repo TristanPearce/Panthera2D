@@ -11,7 +11,6 @@ namespace Panthera2D;
 
 public abstract class Application : IDisposable
 {
-    private Stopwatch _stopwatch;
     private StartupInfo _startupInfo;
     public Window Window { get; private set; }
     public IRenderer2D Renderer { get; private set; }
@@ -28,7 +27,11 @@ public abstract class Application : IDisposable
         InputState = new Input.GLFW3.GLFW3InputState(Window as GLFW3Window);
         Renderer = new OpenGlRenderer2D();
         Input = new InputManager(Window, InputState);
+
+        Initialize();
     }
+
+    protected virtual void Initialize() { }
 
     public void Run()
     {
@@ -69,9 +72,8 @@ public abstract class Application : IDisposable
         InputState.FrameEnd();
     }
 
-    protected abstract void Render();
-
-    protected abstract void Update();
+    protected virtual void Render() { }
+    protected virtual void Update() { }
 
     /// <summary>
     /// Determines whether the application should currently be rendering
