@@ -1,14 +1,16 @@
-﻿using StbImageSharp;
+﻿using Panthera2D.Graphics.OpenGL;
+
+using StbImageSharp;
 
 using System.IO;
 using System.Linq;
 
 namespace Panthera2D.Graphics
 {
-    public static class GraphicsDeviceExtentions
+    public static class OpenGLGraphicsDeviceExtentions
     {
 
-        public static Texture2D CreateTexture2D(this GraphicsDevice gd, Stream stream, bool disposeStream = true)
+        public static Texture2D CreateTexture2D(this OpenGLGraphicsDevice gd, Stream stream, bool disposeStream = true)
         {
             var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
@@ -22,12 +24,12 @@ namespace Panthera2D.Graphics
             return gd.CreateTexture2D(image.Width, image.Height, FromBytesRGBA(ref bytes));
         }
 
-        public static Texture2D CreateTexture2D(this GraphicsDevice gd, string path)
+        public static Texture2D CreateTexture2D(this OpenGLGraphicsDevice gd, string path)
         {
             return gd.CreateTexture2D(new FileStream(path, FileMode.Open));
         }
 
-        public static Texture2D CreateTexture2D(this GraphicsDevice gd, int width, int height)
+        public static Texture2D CreateTexture2D(this OpenGLGraphicsDevice gd, int width, int height)
         {
             return gd.CreateTexture2D(width, height, Enumerable.Repeat<Color>(Color.White, width * height).ToArray());
         }

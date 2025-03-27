@@ -4,7 +4,7 @@ using static Panthera2D.Native.OpenGL;
 
 namespace Panthera2D.Graphics.OpenGL
 {
-    public class OpenGLDeviceBuffer<T> : IDisposable, DeviceBuffer<T> where T : unmanaged
+    public class OpenGLDeviceBuffer<T> : IDisposable where T : unmanaged
     {
 
 

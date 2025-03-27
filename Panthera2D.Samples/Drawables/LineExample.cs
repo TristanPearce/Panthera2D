@@ -38,7 +38,21 @@ public class LineExample : Application
     };
 
     public LineExample(StartupInfo info) : base(info)
-    { }
+    {
+        Input.KeyPressed += (key) => 
+        {
+            if (key == Panthera2D.Input.Key.Space)
+            {
+                rectangle.Color = new Color()
+                {
+                    R = (byte)Random.Shared.Next(0, 255),
+                    G = (byte)Random.Shared.Next(0, 255),
+                    B = (byte)Random.Shared.Next(0, 255),
+                    A = 255
+                };
+            }
+        };
+    }
 
     private float angle = 0;
 
@@ -51,7 +65,7 @@ public class LineExample : Application
 
     protected override void Update()
     {
-        angle += MathF.PI * (Framerate.ActualSecondsBetweenFrames);
+        angle += MathF.PI / 2f * (Framerate.ActualSecondsBetweenFrames);
 
         rectangle.X = MathF.Cos(angle) - rectangle.Width / 2f;
         rectangle.Y = MathF.Sin(angle) - rectangle.Height / 2f;

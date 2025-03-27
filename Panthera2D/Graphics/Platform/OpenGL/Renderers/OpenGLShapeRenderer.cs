@@ -65,7 +65,7 @@ internal class OpenGLShapeRenderer : IDisposable
         _vertices = new List<VertexPositionColor>();
         _indices = new List<uint>();
 
-        var loader = new EmbeddedResourceLoader(typeof(Game).Assembly, "Panthera2D.res.");
+        var loader = new EmbeddedResourceLoader(typeof(Application).Assembly, "Panthera2D.res.");
         var vertex = loader.GetResourceString("shaders.Shape.vert");
         var fragment = loader.GetResourceString("shaders.Shape.frag");
 
