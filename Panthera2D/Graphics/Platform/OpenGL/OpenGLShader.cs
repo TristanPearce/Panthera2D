@@ -8,19 +8,17 @@ using static Panthera2D.Native.OpenGL;
 
 namespace Panthera2D.Graphics
 {
-    public class Shader : IDisposable
+    public class OpenGLShader : IDisposable
     {
         private uint _id;
         public uint Id => _id;
 
-        public Shader(string vertexShaderText, string fragmentShaderText)
+        public OpenGLShader(string vertexShaderText, string fragmentShaderText)
         {
             uint vertexShaderId = csglShader(vertexShaderText, GL_VERTEX_SHADER);
             uint fragmentShaderId = csglShader(fragmentShaderText, GL_FRAGMENT_SHADER);
 
             _id = csglShaderProgram(vertexShaderId, fragmentShaderId);
-
-            //shaders are deleted by csgl
         }
 
         public void Use()

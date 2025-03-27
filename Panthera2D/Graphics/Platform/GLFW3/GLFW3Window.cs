@@ -42,22 +42,22 @@ namespace Panthera2D.Graphics.GLFW3
 
             _handle = glfwCreateWindow(width, height, title, IntPtr.Zero, IntPtr.Zero);
 
-            if (Handle == null)
+            if (_handle == null)
                 throw new Exception("Window could not be created!");
 
             _width = width;
             _height = height;
 
-            glfwMakeContextCurrent(Handle);
+            glfwMakeContextCurrent(_handle);
 
             //ENABLE OPEN GL FUNCTIONS
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            //glEnable(GL_BLEND);
+            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
             _winCloseCallback = CloseCallback;
 
-            glfwSetWindowCloseCallback(this.Handle, _winCloseCallback);
+            glfwSetWindowCloseCallback(this._handle, _winCloseCallback);
         }
 
         private void CloseCallback(IntPtr window)
@@ -69,9 +69,9 @@ namespace Panthera2D.Graphics.GLFW3
 
         public override void Render()
         {
-            //glfwSwapBuffers(Handle);
-            glFinish();
-            glFlush();
+            glfwSwapBuffers(_handle);
+            //glFinish();
+            //glFlush();
         }
 
         public override void Update()

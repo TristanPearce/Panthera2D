@@ -9,11 +9,11 @@ namespace Panthera2D.Graphics
     /// <summary>
     /// Represents the vertex attribute layout
     /// </summary>
-    public class VertexBufferLayout : IEnumerable
+    public class OpenGLVertexBufferLayout : IEnumerable
     {
         private List<VertexBufferLayoutItem> _layoutItems;
 
-        public VertexBufferLayout()
+        public OpenGLVertexBufferLayout()
         {
             _layoutItems = new List<VertexBufferLayoutItem>();
         }
@@ -80,12 +80,12 @@ namespace Panthera2D.Graphics
         /// <item>byte (Byte)</item>
         /// </list>
         /// </remarks>
-        public void Push<T>(int count, bool normalised = false)
+        public OpenGLVertexBufferLayout Push<T>(int count, bool normalised = false)
         {
             if (typeof(T) == typeof(Single))
-                Push(typeof(Single), sizeof(Single), count, normalised);
+                return Push(typeof(Single), sizeof(Single), count, normalised);
             else if (typeof(T) == typeof(Byte))
-                Push(typeof(Byte), sizeof(Byte), count, normalised);
+                return Push(typeof(Byte), sizeof(Byte), count, normalised);
             else
                 throw new ArgumentException($"The type {typeof(T).Name} is not a recognised bufferable type");
         }
@@ -97,7 +97,7 @@ namespace Panthera2D.Graphics
         /// <param name="sizeInBytes"></param>
         /// <param name="count"></param>
         /// <param name="normalised"></param>
-        private void Push(Type type, int sizeInBytes, int count, bool normalised)
+        private OpenGLVertexBufferLayout Push(Type type, int sizeInBytes, int count, bool normalised)
         {
             VertexBufferLayoutItem item = new VertexBufferLayoutItem();
             item.Count = count;
@@ -106,6 +106,7 @@ namespace Panthera2D.Graphics
             item.Size = sizeInBytes;
 
             _layoutItems.Add(item);
+            return this;
         }
 
         private uint BufferableTypeToOpenGLType(Type type)

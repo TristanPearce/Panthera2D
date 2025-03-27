@@ -6,7 +6,7 @@ using System.Numerics;
 
 using static Panthera2D.Native.OpenGL;
 
-namespace Panthera2D.Graphics
+namespace Panthera2D.Graphics.Platform.OpenGL
 {
     public struct VertexPositionColorTexture
     {
@@ -42,7 +42,7 @@ namespace Panthera2D.Graphics
     /// <summary>
     /// Renders Texture2D instances
     /// </summary>
-    public class TextureRenderer : IDisposable
+    public class OpenGlTextureRenderer : IDisposable
     {
 
         private EmbeddedResourceLoader _loader;
@@ -50,15 +50,15 @@ namespace Panthera2D.Graphics
         private List<VertexPositionColorTexture> _vertices;
         private List<uint> _indices;
 
-        private VertexBufferLayout _layout;
+        private OpenGLVertexBufferLayout _layout;
 
         private DeviceBuffer<VertexPositionColorTexture> _vertexBuffer;
         private DeviceBuffer<uint> _indexBuffer;
-        private Shader _shader;
+        private OpenGLShader _shader;
 
         private uint _currentTextureId;
 
-        public TextureRenderer(GraphicsDevice device)
+        public OpenGlTextureRenderer(GraphicsDevice device)
         {
 
             _loader = new EmbeddedResourceLoader(typeof(Game).Assembly, "Panthera2D.res.");
@@ -66,7 +66,7 @@ namespace Panthera2D.Graphics
             _vertices = new List<VertexPositionColorTexture>();
             _indices = new List<uint>();
 
-            _layout = new VertexBufferLayout();
+            _layout = new OpenGLVertexBufferLayout();
             _layout.Push<float>(3); //Position
             _layout.Push<float>(4); //Color
             _layout.Push<float>(2); //UV
@@ -76,7 +76,7 @@ namespace Panthera2D.Graphics
 
 
             //load shaders
-            _shader = new Shader(
+            _shader = new OpenGLShader(
                 _loader.GetResourceString("shaders.Basic.vert"),
                 _loader.GetResourceString("shaders.Basic.frag"));
         }
@@ -118,10 +118,10 @@ namespace Panthera2D.Graphics
             */
 
             //THIS IS WITH THE ORIGIN IN THE CENTRE OF THE IMAGE
-            Vector2 bottomleft = new Vector2((-0.5f * width) + x, (-0.5f * height) + y).Rotate(rotation);
-            Vector2 bottomright = new Vector2((0.5f * width) + x, (-0.5f * height) + y).Rotate(rotation);
-            Vector2 topleft = new Vector2((-0.5f * width) + x, (0.5f * height) + y).Rotate(rotation);
-            Vector2 topright = new Vector2((0.5f * width) + x, (0.5f * height) + y).Rotate(rotation);
+            Vector2 bottomleft = new Vector2(-0.5f * width + x, -0.5f * height + y).Rotate(rotation);
+            Vector2 bottomright = new Vector2(0.5f * width + x, -0.5f * height + y).Rotate(rotation);
+            Vector2 topleft = new Vector2(-0.5f * width + x, 0.5f * height + y).Rotate(rotation);
+            Vector2 topright = new Vector2(0.5f * width + x, 0.5f * height + y).Rotate(rotation);
 
             //THIS IS WHERE THE THE ORIGIN IS BOTTOM LEFT
             /*
@@ -172,7 +172,6 @@ namespace Panthera2D.Graphics
             _indexBuffer.Update(_indices.ToArray());
 
             glDrawElements(GL_TRIANGLES, _indices.Count, GL_UNSIGNED_INT, IntPtr.Zero);
-            //glDrawArrays(GL_TRIANGLES, 0, 4);
         }
 
         public void Dispose()

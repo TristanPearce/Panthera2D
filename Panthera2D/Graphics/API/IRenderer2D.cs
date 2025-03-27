@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Panthera2D.Graphics.Drawbles;
 
-namespace Panthera2D.Graphics
+namespace Panthera2D.Graphics;
+
+public interface IRenderer2D
 {
-    public interface IRenderer2D
-    {
-        void Rect(int x, int y, int width, int height, Color color);
-        void Ellipse(int x, int y, int width, int height, Color color);
-        void Texture(Texture2D tex, int x, int y, int width, int height, Color color);
-        void Text(string text, int x, int y, Font font = null);
-    }
+    void BeginFrame();
+    void EndFrame();
+
+    void Render(Rectangle rectangle);
+    void Render(Line line);
+    void Render(Sprite sprite);
 }

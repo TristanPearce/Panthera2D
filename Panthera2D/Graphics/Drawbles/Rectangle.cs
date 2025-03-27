@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 
-namespace Panthera2D
+namespace Panthera2D.Graphics.Drawbles
 {
     [Serializable]
     public struct Rectangle
     {
+        public Color Color;
 
         public float X;
         public float Y;

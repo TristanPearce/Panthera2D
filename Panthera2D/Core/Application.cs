@@ -1,8 +1,10 @@
-﻿using Panthera2D.Graphics;
+﻿using Panthera2D.Core.Misc;
+using Panthera2D.Graphics;
 using Panthera2D.Graphics.GLFW3;
+using Panthera2D.Graphics.OpenGL;
+using Panthera2D.Graphics.Platform.OpenGL;
 using Panthera2D.Input;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -11,40 +13,21 @@ namespace Panthera2D
     public abstract class Application : IDisposable
     {
         private Stopwatch _stopwatch;
-
         private StartupInfo _startupInfo;
-
         public Window Window { get; private set; }
-        public GraphicsDevice GraphicsDevice { get; private set; }
-
+        public IRenderer2D Renderer { get; private set; }
         public InputState InputState { get; set; }
-
         public InputManager Input { get; private set; }
 
-        /// <summary>
-        /// In seconds
-        /// </summary>
-        public virtual float FrameTime { get; private set; }
-
-        public float FramesPerSecond => 1f / FrameTime;
+        protected Framerate Framerate { get; private set; }  = new Framerate();
 
         public Application(StartupInfo info)
         {
-            _stopwatch = new Stopwatch();
-
             _startupInfo = info;
 
-            Create();
-        }
-
-        private void Create()
-        {
-            //if(OpenGL is supported)
-            //for now, later on detect which platform to use
-            Window = new Panthera2D.Graphics.GLFW3.GLFW3Window(_startupInfo.WindowWidth, _startupInfo.WindowHeight, _startupInfo.WindowTitle);
-            GraphicsDevice = new Panthera2D.Graphics.OpenGL.OpenGLGraphicsDevice();
+            Window = new GLFW3Window(_startupInfo.WindowWidth, _startupInfo.WindowHeight, _startupInfo.WindowTitle);
             InputState = new Input.GLFW3.GLFW3InputState(Window as GLFW3Window);
-
+            Renderer = new OpenGlRenderer2D();
             Input = new InputManager(Window, InputState);
         }
 
@@ -52,23 +35,7 @@ namespace Panthera2D
         {
             while (Window.Alive)
             {
-                InputState.FrameBegin();
-                if (ShouldRender())
-                {
-                    this.Render();
-                    Window.Render();
-                }
-                InputState.FrameEnd();
-
-                Window.Update();
-
-                if (ShouldUpdate())
-                    this.Update();
-
-                Input.Update(FrameTime);
-
-                FrameTime = (float)_stopwatch.Elapsed.TotalSeconds;
-                _stopwatch.Restart();
+                Tick();
             }
         }
 
@@ -76,25 +43,31 @@ namespace Panthera2D
         {
             while (Window.Alive && frames > 0)
             {
-                InputState.FrameBegin();
-                if (ShouldRender())
-                {
-                    Render();
-                    Window.Render();
-                }
-                InputState.FrameEnd();
-                Window.Update();
-
-                if(ShouldUpdate())
-                    Update();
-
-                Input.Update(FrameTime);
-
+                Tick();
                 frames--;
-
-                FrameTime = (float)_stopwatch.Elapsed.TotalSeconds;
-                _stopwatch.Restart();
             }
+        }
+
+        private void Tick()
+        {
+            InputState.FrameBegin();
+            if (ShouldRender() && Framerate.ShouldRender())
+            {
+                Framerate.Tick();
+                Renderer.BeginFrame();
+                Render();
+                Renderer.EndFrame();
+            }
+
+            Window.Render();
+            Window.Update();
+
+            if (ShouldUpdate())
+                Update();
+
+            Input.Update(Framerate.Actual);
+
+            InputState.FrameEnd();
         }
 
         protected abstract void Render();
@@ -122,7 +95,6 @@ namespace Panthera2D
         public virtual void Dispose()
         {
             Window.Dispose();
-            GraphicsDevice.Dispose();
             InputState.Dispose();
         }
 

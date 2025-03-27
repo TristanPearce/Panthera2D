@@ -3,12 +3,12 @@
     public class OpenGLGraphicsDevice : GraphicsDevice
     {
 
-        private VertexArrayObject _defaultVao;
+        private OpenGlVertexArrayObject _defaultVao;
 
 
         public OpenGLGraphicsDevice()
         {
-            _defaultVao = new VertexArrayObject();
+            _defaultVao = new OpenGlVertexArrayObject();
             _defaultVao.Bind();
         }
 

@@ -4,12 +4,12 @@ using static Panthera2D.Native.OpenGL;
 
 namespace Panthera2D.Graphics
 {
-    public class VertexArrayObject : IDisposable
+    public class OpenGlVertexArrayObject : IDisposable
     {
 
         private uint _id;
 
-        public VertexArrayObject()
+        public OpenGlVertexArrayObject()
         {
             glCreateVertexArrays(1, ref _id);
         }
