@@ -1,5 +1,6 @@
 ﻿using Panthera2D.Graphics;
 using Panthera2D.Graphics.Drawbles;
+using Panthera2D.Input;
 
 using System;
 using System.Numerics;
@@ -18,12 +19,12 @@ public class PillowApplication() : Application()
         Thickness = 0.003f
     };
 
-    private int warmupFrames = 3;
-
     protected override void Initialize()
     {
         Renderer.Viewport.SetSize(new Vector2(2.2f, 2.2f));
         UpdatePoint();
+
+        Input.KeyPressed += key => { if (key == Key.Space) Renderer.Clear(Color.Black); };
     }
 
     protected override void Render()
@@ -43,17 +44,12 @@ public class PillowApplication() : Application()
         var sin = MathF.Sin(currentAngle);
         var tan = MathF.Tan(currentAngle);
 
-        var x = MathF.Cos(currentAngle * 2.21f) + (MathF.Cos(currentAngle * 10f) / 50);
-        var y = MathF.Sin(currentAngle * 10) * MathF.Cos(currentAngle * 1.1f);
+        var x = MathF.Cos(currentAngle * 1f) + (MathF.Cos(currentAngle * 10f) / 50);
+        var y = MathF.Sin(currentAngle * 50.2f) * MathF.Sin(currentAngle * 2.1f);
         var color = Color.FromHSL((currentAngle / 100) % (MathF.PI / 3f), 1f, 0.5f);
 
         line.Start = line.End;
         line.End = new Vector2(x, y);
         line.Color = color;
-
-        if(warmupFrames-- > 0)
-        {
-            line.Color = Color.Black;
-        }
     }
 }

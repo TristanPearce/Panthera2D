@@ -52,7 +52,7 @@ public sealed class OpenGlRenderer2D : IRenderer2D, IDisposable
 
     public void Clear(Color color)
     {
-        glClearColor(color.R, color.G, color.B, color.A);
+        glClearColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 

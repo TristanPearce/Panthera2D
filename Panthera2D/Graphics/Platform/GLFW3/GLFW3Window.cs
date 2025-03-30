@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 using static Panthera2D.Native.Glfw3;
 using static Panthera2D.Native.OpenGL;
@@ -11,12 +12,15 @@ namespace Panthera2D.Graphics.GLFW3
     /// </summary>
     public class GLFW3Window : IWindow
     {
-        private GLFWwindowclosefun _winCloseCallback;
+        private GLFWwindowclosefun glfwCloseCallback;
+        private GLFWwindowposfun glfwPositionCallback;
+        private GLFWwindowsizefun glfwSizeCallback;
+        private GLFWerrorfun glfwErrorCallback;
 
-        private IntPtr _handle;
-        public IntPtr Handle => _handle;
+        private IntPtr handle;
+        public IntPtr Handle => handle;
 
-        public bool Alive => glfwWindowShouldClose(Handle) == 0;
+        public bool Alive { get; private set; }
 
         /// <summary>
         /// Width / Height
@@ -62,33 +66,65 @@ namespace Panthera2D.Graphics.GLFW3
             }
         }
 
-        public GLFW3Window(int width = 640, int height = 480, string title = "Panthera2D")
+        private static object windowLock = new();
+        private static int windowCount = 0;
+        static GLFW3Window()
         {
             csglLoadGlfw();
+        }
 
-            glfwInit();
-            glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // Change this to your targeted major version
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5); // Change this to your targeted minor version
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        public GLFW3Window(int width = 640, int height = 480, string title = "Panthera2D")
+        {
+            lock (windowLock)
+            {
+                if(windowCount == 0)
+                    glfwInit();
+                
+                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // Change this to your targeted major version
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5); // Change this to your targeted minor version
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-            _handle = glfwCreateWindow(width, height, title, IntPtr.Zero, IntPtr.Zero);
+                handle = glfwCreateWindow(width, height, title, IntPtr.Zero, IntPtr.Zero);
 
-            if (_handle == null)
-                throw new Exception("Window could not be created!");
+                if (handle == IntPtr.Zero)
+                    throw new Exception("Window could not be created!");
 
-            size = new Vector2i(width, height);
+                glfwPositionCallback = (window, x, y) =>
+                {
+                    position = new Vector2i(x, y);
+                    Console.WriteLine($"Window moved to {x}, {y}");
+                };
 
-            glfwMakeContextCurrent(_handle);
+                glfwSizeCallback = (window, w, h) =>
+                {
+                    size = new Vector2i(w, h);
+                    Console.WriteLine($"Window resized to {w}, {h}");
+                };
 
-            //ENABLE OPEN GL FUNCTIONS
-            //glEnable(GL_BLEND);
-            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glfwErrorCallback = ((error, description) =>
+                {
+                    Console.WriteLine($"GLFW Error: {error} - {description}");
+                });
 
 
-            _winCloseCallback = CloseCallback;
+                size = new Vector2i(width, height);
+                glfwMakeContextCurrent(handle);
 
-            glfwSetWindowCloseCallback(this._handle, _winCloseCallback);
+                //ENABLE OPEN GL FUNCTIONS
+                //glEnable(GL_BLEND);
+                //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+                glfwCloseCallback = CloseCallback;
+                glfwSetWindowPosCallback(handle, glfwPositionCallback);
+                glfwSetWindowSizeCallback(handle, glfwSizeCallback);
+                glfwSetWindowCloseCallback(handle, glfwCloseCallback);
+                glfwSetErrorCallback(glfwErrorCallback);
+
+                Interlocked.Increment(ref windowCount);
+                Alive = true;
+            }
         }
 
         private void CloseCallback(IntPtr window)
@@ -100,7 +136,7 @@ namespace Panthera2D.Graphics.GLFW3
 
         public void Render()
         {
-            glfwSwapBuffers(_handle);
+            glfwSwapBuffers(handle);
             //glFinish();
             //glFlush();
         }
@@ -115,9 +151,14 @@ namespace Panthera2D.Graphics.GLFW3
             if (!Alive) return;
 
             glfwSetWindowShouldClose(Handle, 1);
-
             glfwDestroyWindow(Handle);
-            glfwTerminate();
+
+            Alive = false;
+
+            Interlocked.Decrement(ref windowCount);
+
+            if (windowCount == 0)
+                glfwTerminate();
         }
     }
 }
